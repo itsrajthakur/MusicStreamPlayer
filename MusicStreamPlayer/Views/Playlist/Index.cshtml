@@ -1,0 +1,66 @@
+@model List<Playlist>
+
+<div class="container py-5" id="PlaylistCreated" data-playlist-created="@TempData["PlaylistCreated"]">
+    <div class="music-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Your Playlists</h2>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
+                <i class="fas fa-plus me-2"></i>Create Playlist
+            </button>
+        </div>
+
+        <div class="row">
+            @{
+                if (Model.Count == 0)
+                {
+                    <div class="empty-playlist">
+                        <i class="fas fa-list"></i>
+                        <p>No playlist yet</p>
+                    </div>
+                }
+                else
+                {
+                @foreach (var playlist in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="playlist-card">
+                        <a href="@Url.Action("Details", "Playlist", new { id = playlist.Id })" 
+                           class="text-decoration-none">
+                            <div class="playlist-info">
+                                <h3>@playlist.Name</h3>
+                                <span class="song-count">@playlist.Songs.Count songs</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                }
+            }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Create Playlist Modal -->
+<div class="modal fade" id="createPlaylistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Playlist</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Playlist Name</label>
+                        <input type="text" name="name" class="form-control bg-dark text-white" required />
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success">Create Playlist</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="~/css/playlist.css" rel="stylesheet" />
+<script src="~/js/playlist.js"></script>

@@ -1,0 +1,59 @@
+﻿.playlist-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.playlist-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.playlist-info h3 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.empty-playlist {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.empty-playlist i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.playlist-info p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.song-count {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
+.modal-content {
+    background: linear-gradient(45deg, #1db954, #191414) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white !important;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(29, 185, 84, 0.25);
+    color: white !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}

@@ -1,0 +1,55 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="auth-card p-4 p-sm-5">
+                    <h2 class="auth-title text-center">Create Account</h2>
+                    <form asp-action="Register">
+                        <div asp-validation-summary="ModelOnly" class="validation-message"></div>
+                        
+                        <div class="form-floating mb-4">
+                            <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                            <label asp-for="Email"><i class="fas fa-envelope me-2"></i>Email address</label>
+                            <span asp-validation-for="Email" class="validation-message"></span>
+                        </div>
+                        
+                        <div class="form-floating mb-4">
+                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                            <label asp-for="Password"><i class="fas fa-lock me-2"></i>Password</label>
+                            <span asp-validation-for="Password" class="validation-message"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                            <label asp-for="ConfirmPassword"><i class="fas fa-lock me-2"></i>Confirm Password</label>
+                            <span asp-validation-for="ConfirmPassword" class="validation-message"></span>
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-auth">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center">
+                        <p class="mb-0" style="color: rgba(255, 255, 255, 0.7);">
+                            Already have an account? 
+                            <a asp-action="Login" class="auth-link">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="~/css/account.css" rel="stylesheet" />
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

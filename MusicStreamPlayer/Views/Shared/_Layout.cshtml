@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MusicStreamPlayer</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MusicStreamPlayer.styles.css" asp-append-version="true" />
+    <link href="~/css/layout.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body data-playlist-created="@TempData["account"]">
+    <header>
+        @* <nav class="navbar navbar-expand-sm navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-music me-2"></i>MusicStreamPlayer
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home me-1"></i> Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Playlist" asp-action="Index">
+                                    <i class="fas fa-list me-1"></i> Playlists
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="GetUserPlayHistory">
+                                    <i class="fas fa-shield-alt me-1"></i> PlayHistory
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="navbar-nav search-container mx-auto">
+                            <form id="searchForm" asp-controller="Home" asp-action="Search" method="post" class="w-100 d-flex position-relative">
+                                <i class="fas fa-search search-icon"></i>
+                                <input class="form-control search-input" type="text" placeholder="Search songs..." id="searchInput" name="query" autocomplete="off" />
+                                <ul id="suggestions" class="list-group position-absolute top-100 w-100 suggestions"></ul>
+                            </form>
+                        </div>
+                    }
+
+                    <ul class="navbar-nav auth-buttons">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="btn btn-register">
+                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-2">
+                                <a class="btn btn-register" asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus me-1"></i> Register
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-login" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav> *@
+        <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand m-0" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-music me-2"></i>MusicStreamPlayer
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" style="background: black;" id="navbarScroll">
+                        <div class="navbar-nav search-container mx-auto">
+                     @if (User.Identity.IsAuthenticated)
+                    {
+                            <form id="searchForm" asp-controller="Home" asp-action="Search" method="post" class="w-100 d-flex position-relative">
+                                <i class="fas fa-search search-icon"></i>
+                                <input class="form-control search-input" type="text" placeholder="Search songs..." id="searchInput" name="query" autocomplete="off" />
+                                <ul id="suggestions" class="list-group position-absolute top-100 w-100 suggestions" style="z-index: 1;"></ul>
+                            </form>
+                    }
+                        </div>
+                    <ul class="navbar-nav navbar-nav-scroll auth-buttons gap-xxl-5" style="--bs-scroll-height: 100px;">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home me-1"></i> Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Playlist" asp-action="Index">
+                                    <i class="fas fa-list me-1"></i> Playlists
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="GetUserPlayHistory">
+                                    <i class="fas fa-shield-alt me-1"></i> PlayHistory
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="btn btn-register">
+                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-2">
+                                <a class="btn btn-register" asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus me-1"></i> Register
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-login" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer text-muted">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    &copy; 2025 - MusicStreamPlayer
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/getsuggestions.js"></script>
+    <script src="~/js/account.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

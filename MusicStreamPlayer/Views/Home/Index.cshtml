@@ -1,0 +1,63 @@
+﻿@model List<SongModel>
+
+<div class="container py-5">
+    <div class="music-container">
+        <h2 class="page-title text-center">@ViewData["Title"]</h2>
+        @if (Model.Count == 0)
+        {
+            <div class="empty-playlist">
+                <i class="fas fa-music"></i>
+                <p>No songs yet</p>
+            </div>
+        }
+        else
+        {
+        <ul id="songList" class="list-unstyled">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <li data-index="@i" data-url="@Model[i].MediaUrl" 
+                    class="song-item d-flex align-items-center p-3" style="cursor:pointer;">
+                    <img src="@Model[i].Image" class="song-image" alt="@Model[i].Title"/>
+                    <div class="song-info ms-3 flex-grow-1">
+                        <span class="song-title">@Model[i].Title</span>
+                        <span class="song-artist">@Model[i].Artist</span>
+                    </div>
+                    <button class="btn btn-outline-light me-2 add-to-playlist-btn" 
+                            onclick="event.stopPropagation();" 
+                            data-song-title="@Model[i].Title"
+                            data-song-image="@Model[i].Image"
+                            data-song-url="@Model[i].MediaUrl"
+                            data-song-artist="@Model[i].Artist">
+                        <i class="fas fa-plus"></i> Add to Playlist
+                    </button>
+                    <span class="play-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </span>
+                </li>
+            }
+        </ul>
+        }
+
+        <div class="custom-audio-player">
+            <audio id="audioPlayer" controls></audio>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="playlistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Playlist</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="playlistList" class="list-group">
+                    <!-- Playlists will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="~/css/home.css" rel="stylesheet" />
+<script src="~/js/home.js"></script>
