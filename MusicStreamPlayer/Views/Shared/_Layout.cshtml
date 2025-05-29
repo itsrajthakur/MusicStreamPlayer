@@ -12,76 +12,7 @@
 </head>
 <body data-playlist-created="@TempData["account"]">
     <header>
-        @* <nav class="navbar navbar-expand-sm navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-music me-2"></i>MusicStreamPlayer
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                    <i class="fas fa-home me-1"></i> Home
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Playlist" asp-action="Index">
-                                    <i class="fas fa-list me-1"></i> Playlists
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="GetUserPlayHistory">
-                                    <i class="fas fa-shield-alt me-1"></i> PlayHistory
-                                </a>
-                            </li>
-                        }
-                    </ul>
-
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="navbar-nav search-container mx-auto">
-                            <form id="searchForm" asp-controller="Home" asp-action="Search" method="post" class="w-100 d-flex position-relative">
-                                <i class="fas fa-search search-icon"></i>
-                                <input class="form-control search-input" type="text" placeholder="Search songs..." id="searchInput" name="query" autocomplete="off" />
-                                <ul id="suggestions" class="list-group position-absolute top-100 w-100 suggestions"></ul>
-                            </form>
-                        </div>
-                    }
-
-                    <ul class="navbar-nav auth-buttons">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post">
-                                    <button type="submit" class="btn btn-register">
-                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
-                                    </button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item me-2">
-                                <a class="btn btn-register" asp-controller="Account" asp-action="Register">
-                                    <i class="fas fa-user-plus me-1"></i> Register
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-login" asp-controller="Account" asp-action="Login">
-                                    <i class="fas fa-sign-in-alt me-1"></i> Login
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav> *@
-        <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand m-0" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-music me-2"></i>MusicStreamPlayer
@@ -119,6 +50,16 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="GetFavoriteSongs">
+                                    <i class="fa fa-heart me-1"></i> My Favorites
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Artists">
+                                    @* <i class="fa fa-heart me-1"></i> *@ Artists
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post">
                                     <button type="submit" class="btn btn-register">
                                         <i class="fas fa-sign-out-alt me-1"></i> Logout
@@ -145,8 +86,8 @@
         </nav>
     </header>
 
-    <div class="container mt-4">
-        <main role="main" class="pb-3">
+    <div class="container my-4">
+        <main role="main" class="py-3">
             @RenderBody()
         </main>
     </div>

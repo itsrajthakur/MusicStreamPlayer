@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MusicStreamPlayer.Models
 {
-    public class PlayHistory
+    public class CommonModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

@@ -2,6 +2,18 @@
 const songs = Array.from(document.querySelectorAll(".song-item"));
 let currentIndex = 0;
 
+function updateNowPlayingInfo(songElement) {
+    const image = document.querySelector(".playlist-icon");
+    const title = document.getElementById("title");
+    const artist = document.getElementById("artist");
+
+    if (!songElement) return;
+
+    image.style.background = `url('${songElement.querySelector("img").src}') center center / cover no-repeat`;
+    title.innerHTML = songElement.querySelector(".song-title")?.innerText || "";
+    artist.innerHTML = songElement.querySelector(".song-artist")?.innerText || "";
+}
+
 function updateUI(index, isPlaying) {
     songs.forEach((li, i) => {
         if (i === index) {
@@ -31,13 +43,15 @@ songs.forEach((li, i) => {
             }
         } else {
             playSong(i);
+            updateNowPlayingInfo(songs[i]);
         }
     });
 });
 
+// delete playlist
 document.querySelectorAll(".delete-playlist-form").forEach(form => {
     form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent immediate submission
+        e.preventDefault();
 
         Swal.fire({
             title: 'Are you sure?',
@@ -56,7 +70,7 @@ document.querySelectorAll(".delete-playlist-form").forEach(form => {
                     timer: 1000,
                     showConfirmButton: false,
                     willClose: () => {
-                        form.submit(); // Submit after alert closes
+                        form.submit();
                     }
                 });
             }
@@ -64,6 +78,7 @@ document.querySelectorAll(".delete-playlist-form").forEach(form => {
     });
 });
 
+//remove song from playlist
 document.querySelectorAll(".btn-remove").forEach(button => {
     button.addEventListener("click", async (e) => {
         e.stopPropagation();
@@ -120,9 +135,11 @@ document.querySelectorAll(".btn-remove").forEach(button => {
 player.addEventListener("ended", () => {
     if (currentIndex < songs.length - 1) {
         playSong(currentIndex + 1);
+        updateNowPlayingInfo(songs[currentIndex + 1]);
     }
 });
 
 if (songs.length > 0) {
     playSong(0);
+    updateNowPlayingInfo(songs[0]);
 }

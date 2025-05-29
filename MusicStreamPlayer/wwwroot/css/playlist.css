@@ -1,4 +1,18 @@
-﻿.playlist-card {
+﻿.music-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.playlist-card {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     padding: 20px;

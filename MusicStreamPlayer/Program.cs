@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IPlayHistoryService, PlayHistoryService>();
+builder.Services.AddScoped<IMongoDbService, MongoDbService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 
 // Configure MongoDB Settings

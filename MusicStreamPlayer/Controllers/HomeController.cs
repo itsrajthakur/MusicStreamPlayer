@@ -14,15 +14,24 @@ namespace MusicStreamPlayer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly IPlayHistoryService _playHistoryService;
+        private readonly IMongoDbService _mongoDbService;
+        private HashSet<string> _favoriteTitles = new();
 
         public HomeController(ILogger<HomeController> logger, 
                              IHttpClientFactory clientFactory,
-                             IPlayHistoryService playHistoryService)
+                             IMongoDbService mongoDbService)
         {
             _logger = logger;
             _clientFactory = clientFactory;
-            _playHistoryService = playHistoryService;
+            _mongoDbService = mongoDbService;
+        }
+        private async Task PopulateFavoriteTitlesAsync()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var favorites = await _mongoDbService.GetFavoriteSongsAsync(userId);
+            _favoriteTitles = favorites
+                .Select(f => f.Title)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
         [HttpGet]
@@ -39,12 +48,14 @@ namespace MusicStreamPlayer.Controllers
 
             var json = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
+
             var results = doc.RootElement.GetProperty("data").GetProperty("results");
 
+            await PopulateFavoriteTitlesAsync();
             var songs = new List<SongModel>();
+
             foreach (var item in results.EnumerateArray())
             {
-                Console.WriteLine(item.ToString());
                 var title = item.GetProperty("name").GetString();
                 var image = item.GetProperty("image").EnumerateArray().Last().GetProperty("url").GetString();
                 var mediaUrl = item.GetProperty("downloadUrl").EnumerateArray().Last().GetProperty("url").GetString();
@@ -55,10 +66,11 @@ namespace MusicStreamPlayer.Controllers
                     Title = title,
                     Image = image,
                     MediaUrl = mediaUrl,
-                    Artist = artist
+                    Artist = artist,
+                    isFavorite = _favoriteTitles.Contains(title)
                 });
             }
-            ViewData["Title"] = "🎶 Treanding Songs";
+            ViewData["Title"] = "Treanding Songs 🎶";
             return View(songs);
         }
 
@@ -77,8 +89,9 @@ namespace MusicStreamPlayer.Controllers
             var json = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
             var results = doc.RootElement.GetProperty("data").GetProperty("results");
-
+            await PopulateFavoriteTitlesAsync();
             var songs = new List<SongModel>();
+
             foreach (var item in results.EnumerateArray())
             {
                 Console.WriteLine(item.ToString());
@@ -92,10 +105,11 @@ namespace MusicStreamPlayer.Controllers
                     Title = title,
                     Image = image,
                     MediaUrl = mediaUrl,
-                    Artist = artist
+                    Artist = artist,
+                    isFavorite = _favoriteTitles.Contains(title)
                 });
             }
-            ViewData["Title"] = "🎵 Music Stream";
+            ViewData["Title"] = "Music Stream 🎵";
             return View("Index", songs);
         }
 
@@ -129,11 +143,6 @@ namespace MusicStreamPlayer.Controllers
             return Json(suggestions);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -141,12 +150,12 @@ namespace MusicStreamPlayer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LogPlay([FromBody] PlayHistory playHistory)
+        public async Task<IActionResult> LogPlay([FromBody] CommonModel playHistory)
         {
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                await _playHistoryService.LogPlayAsync(userId, playHistory);
+                await _mongoDbService.LogPlayAsync(userId, playHistory);
                 return Ok();
             }
             catch (Exception ex)
@@ -162,8 +171,8 @@ namespace MusicStreamPlayer.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var history = await _playHistoryService.GetUserPlayHistoryAsync(userId);
-
+                var history = await _mongoDbService.GetUserPlayHistoryAsync(userId);
+                await PopulateFavoriteTitlesAsync();
                 var songs = new List<SongModel>();
                 foreach (var item in history)
                 {
@@ -178,10 +187,11 @@ namespace MusicStreamPlayer.Controllers
                         Title = title,
                         Image = image,
                         MediaUrl = mediaUrl,
-                        Artist = artist
+                        Artist = artist,
+                        isFavorite = _favoriteTitles.Contains(title)
                     });
                 }
-                ViewData["Title"] = "🎶 Play Music History";
+                ViewData["Title"] = "Play Music History 🎶";
                 return View("Index", songs);
             }
             catch (Exception ex)
@@ -189,6 +199,105 @@ namespace MusicStreamPlayer.Controllers
                 _logger.LogError(ex, "Error Get play history");
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ClearUserPlayHistory()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _mongoDbService.ClearUserPlayHistoryAsync(userId);
+            return RedirectToAction(nameof(Index));
+        }
+
+            [HttpPost]
+        public async Task<IActionResult> AddToFavorite([FromBody] CommonModel song)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                bool added = await _mongoDbService.AddToFavoritesAsync(userId, song);
+                return Json(new { success = added });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error to add favorite");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveToFavorite([FromBody] CommonModel song)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _mongoDbService.RemoveFromFavoritesAsync(userId, song.Title);
+            return Json(new { success = true });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetFavoriteSongs()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var favorites = await _mongoDbService.GetFavoriteSongsAsync(userId);
+                await PopulateFavoriteTitlesAsync();
+                var songs = new List<SongModel>();
+                foreach (var item in favorites)
+                {
+                    Console.WriteLine(item.ToString());
+                    var title = item.Title;
+                    var image = item.Image;
+                    var mediaUrl = item.MediaUrl;
+                    var artist = item.Artist;
+
+                    songs.Add(new SongModel
+                    {
+                        Title = title,
+                        Image = image,
+                        MediaUrl = mediaUrl,
+                        Artist = artist,
+                        isFavorite = _favoriteTitles.Contains(title)
+                    });
+                }
+                ViewData["Title"] = "Favorite Songs 🎶";
+                return View("Index", songs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Get play history");
+                return StatusCode(500);
+            }
+        }
+
+
+        [HttpGet("api/artists")]
+        public async Task<IActionResult> GetArtists()
+        {
+            using var client = _clientFactory.CreateClient();
+            var response = await client.GetAsync("https://www.jiosaavn.com/api.php?__call=webapi.getLaunchData&ctx=wap6dot0");
+
+            if (!response.IsSuccessStatusCode)
+                return BadRequest("Failed to load artists.");
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            var artists = new List<ArtistModel>();
+
+            if (doc.RootElement.TryGetProperty("artist_recos", out JsonElement artistArray))
+            {
+                foreach (var artist in artistArray.EnumerateArray())
+                {
+                    artists.Add(new ArtistModel
+                    {
+                        Name = artist.GetProperty("title").GetString(),
+                        Image = artist.GetProperty("image").GetString(),
+                    });
+                }
+            }
+
+            return Ok(artists);
         }
     }
 }

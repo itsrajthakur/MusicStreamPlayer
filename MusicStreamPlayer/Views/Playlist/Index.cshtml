@@ -3,13 +3,13 @@
 <div class="container py-5" id="PlaylistCreated" data-playlist-created="@TempData["PlaylistCreated"]">
     <div class="music-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="page-title">Your Playlists</h2>
+            <h1 class="page-title">Your Playlists</h1>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
                 <i class="fas fa-plus me-2"></i>Create Playlist
             </button>
         </div>
 
-        <div class="row">
+        <div class="row mt-5">
             @{
                 if (Model.Count == 0)
                 {

@@ -1,0 +1,65 @@
+﻿<style>
+    .carousel-item img {
+        transition: transform 0.3s ease;
+    }
+
+    .carousel-item img:hover {
+        transform: scale(1.1);
+    }
+
+    .bg-transparent{
+        background: transparent !important;
+        border-left: 0 !important;
+    }
+
+</style>
+
+<div id="artistCarousel" class="carousel slide my-5" data-bs-ride="carousel">
+    <div class="carousel-inner" id="carousel-inner">
+        <!-- Slides will be added here -->
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#artistCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#artistCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<script>
+    async function loadArtists() {
+        const res = await fetch('/api/artists');
+        const data = await res.json();
+
+        const chunkSize = 6;
+        const container = document.getElementById('carousel-inner');
+
+        for (let i = 0; i < data.length; i += chunkSize) {
+            const chunk = data.slice(i, i + chunkSize);
+            const activeClass = i === 0 ? 'active' : '';
+            const slide = document.createElement('div');
+            slide.className = `bg-transparent border-0 carousel-item ${activeClass}`;
+
+            const innerDiv = document.createElement('div');
+            innerDiv.className = 'bg-transparent d-flex justify-content-center gap-4';
+
+            chunk.forEach(artist => {
+                const card = document.createElement('div');
+                card.className = 'text-center';
+                card.style.width = '150px';
+                card.style.height = '145px';
+                card.innerHTML = `
+                    <img src="${artist.image}" class="rounded-circle mb-2" style="width: 100px; height: 100px;" />
+                    <h6>${artist.name}</h6>
+                `;
+                innerDiv.appendChild(card);
+            });
+
+            slide.appendChild(innerDiv);
+            container.appendChild(slide);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadArtists);
+</script>
