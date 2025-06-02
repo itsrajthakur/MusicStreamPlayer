@@ -18,7 +18,10 @@
                 </form>
             }
         </div>
-        <partial name="_Artists" />
+        @if (ViewData["Title"] == "Treanding Songs 🎶")
+        {
+            <partial name="_Artists" />
+        }
         <div class="playlist-header w-100">
             <div class="playlist-info w-100">
                 <div class="playlist-icon">

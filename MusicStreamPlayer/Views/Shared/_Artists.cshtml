@@ -46,13 +46,32 @@
 
             chunk.forEach(artist => {
                 const card = document.createElement('div');
-                card.className = 'text-center';
+                card.className = 'text-center artist-card';
                 card.style.width = '150px';
                 card.style.height = '145px';
+                card.style.cursor = 'pointer';
+
                 card.innerHTML = `
                     <img src="${artist.image}" class="rounded-circle mb-2" style="width: 100px; height: 100px;" />
                     <h6>${artist.name}</h6>
                 `;
+
+                // 👇 Click Event: Submit form to /Search with POST
+                card.addEventListener('click', () => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/Home/Search';
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'query';
+                    input.value = artist.name;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+
                 innerDiv.appendChild(card);
             });
 

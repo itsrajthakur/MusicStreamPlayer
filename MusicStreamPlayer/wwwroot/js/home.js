@@ -37,7 +37,7 @@ async function playSong(index) {
         player.src = song.dataset.url;
         player.play();
         updateUI(index, true);
-        
+
         // Store in DB via API
         const data = {
             title: song.querySelector(".song-title").innerText,
@@ -63,7 +63,7 @@ async function addToPlaylist(song, playlistId) {
     try {
         const response = await fetch(`/Playlist/AddSong?playlistId=${playlistId}`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(song)
         });
 
@@ -131,17 +131,17 @@ document.querySelectorAll('.add-to-playlist-btn').forEach(button => {
             playlistList.innerHTML = '';
 
             if (playlists.length != 0) {
-            playlists.forEach(playlist => {
-                const item = document.createElement('button');
-                item.className = 'list-group-item list-group-item-action bg-dark text-white';
-                item.textContent = playlist.name;
-                item.onclick = async () => {
-                    await addToPlaylist(songData, playlist.id);
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('playlistModal'));
-                    modal.hide();
-                };
-                playlistList.appendChild(item);
-            });
+                playlists.forEach(playlist => {
+                    const item = document.createElement('button');
+                    item.className = 'list-group-item list-group-item-action bg-dark text-white';
+                    item.textContent = playlist.name;
+                    item.onclick = async () => {
+                        await addToPlaylist(songData, playlist.id);
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('playlistModal'));
+                        modal.hide();
+                    };
+                    playlistList.appendChild(item);
+                });
             }
             else {
                 const item = document.createElement('button');
